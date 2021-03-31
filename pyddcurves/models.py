@@ -51,7 +51,7 @@ def harmonic_beta_np(aa, Aa, Ba, omega, tdays):
     
 # Main Inference function
 def density_bhm_harmonic_dht(data, omega, use_mcmc=True, 
-            nchains=2,ncores=2):
+            nchains=2,ncores=2, tune=1500):
     # Full model
     tdays = shared(data['tdays'])
     nparams=6
@@ -80,8 +80,13 @@ def density_bhm_harmonic_dht(data, omega, use_mcmc=True,
         mu_beta_5 = pm.Deterministic('mu_beta_5',harmonic_beta(aa[3], Aa[:,5], Ba[:,5], omega, tdays))
         
 
-        sigma_beta = pm.HalfNormal('sigma_beta', sd=1.0, shape=(nparams,))
-        sigma_curve = pm.HalfNormal('sigma_curve', sd=2.0 )
+        # Half-normal priors
+        #sigma_beta = pm.HalfNormal('sigma_beta', sd=1.0, shape=(nparams,))
+        #sigma_curve = pm.HalfNormal('sigma_curve', sd=2.0 )
+
+        # Inverse Gamma priors
+        sigma_beta = pm.InverseGamma('sigma_beta', 1 , 1, shape=(nparams,))
+        sigma_curve = pm.InverseGamma('sigma_curve', 1 , 1)
 
         beta_0 = pm.Normal('beta_0', mu=mu_beta_0, sd=sigma_beta[0], shape=nt)
         beta_1 = BoundedNormal('beta_1', mu=mu_beta_1, sd=sigma_beta[1], shape=nt)
@@ -108,7 +113,7 @@ def density_bhm_harmonic_dht(data, omega, use_mcmc=True,
         # Inference step
         #trace = pm.sample(500)
         if use_mcmc:
-            trace = pm.sample(500, tune=1500, step=pm.NUTS(), cores=ncores, chains=nchains)
+            trace = pm.sample(500, tune=tune, step=pm.NUTS(), cores=ncores, chains=nchains)
         else:
             # Use variational inference
             inference = pm.ADVI()
