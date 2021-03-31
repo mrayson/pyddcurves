@@ -144,7 +144,8 @@ def density_bhm_dht(data, use_bhm=True, use_mcmc=True,
                         transform=pm.distributions.transforms.ordered,
                           testval=np.array([0.1,0.2]))
 
-            sigma_beta = pm.HalfNormal('sigma_beta', sd=1.0, shape=(nparams,))
+            #sigma_beta = pm.HalfNormal('sigma_beta', sd=1.0, shape=(nparams,))
+            sigma_beta = pm.InverseGamma('sigma_beta', 1 , 1, shape=(nparams,))
 
         else:
             mu_beta_0 = 1
@@ -155,7 +156,8 @@ def density_bhm_dht(data, use_bhm=True, use_mcmc=True,
             mu_beta_mid = [0,1]
             sigma_beta=[1,1,1,1,1,1,1]
 
-        sigma_curve = pm.HalfNormal('sigma_curve', sd=2.0 )
+        #sigma_curve = pm.HalfNormal('sigma_curve', sd=2.0 )
+        sigma_curve = pm.InverseGamma('sigma_curve', 1 , 1)
 
         beta_0 = pm.Normal('beta_0', mu=mu_beta_0, sd=sigma_beta[0], shape=nt)
         beta_1 = BoundedNormal('beta_1', mu=mu_beta_1, sd=sigma_beta[1], shape=nt)
