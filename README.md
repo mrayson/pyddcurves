@@ -10,6 +10,12 @@ Details of the method are outlined in:
 
 Original STAN code is here [https://github.com/hhau/ddcurves2]
 
+## Installation
+
+`git clone https://github.com/mrayson/pyddcurves.git`
+
+`pip install -e .`
+
 ---
 
 Matt Rayson
